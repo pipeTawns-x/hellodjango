@@ -1,35 +1,23 @@
 # Hello Django — mi práctica con Django + Docker
 
-Proyecto de práctica del curso de **Programador Front-end de EBAC**, construido
+Proyecto de práctica de backend, construido
 sobre el template open-source [`docker-django-example` de Nick Janetakis](https://github.com/nickjj/docker-django-example).
-No es una app mía desde cero: es un ejercicio honesto para aprender a levantar
+No es una app mía desde cero: es un ejercicio para aprender a levantar
 y entender un proyecto Django profesional corriendo en Docker.
 
 ## Qué hice acá
 
-- **Levanté el stack completo con Docker Compose**: `web` (Django + gunicorn),
+- Cloné el template y levanté el stack con Docker Compose: `web` (Django + gunicorn),
   `postgres`, `redis`, `worker` (Celery) y los watchers de assets `js`/`css`.
-  Entendí qué hace cada servicio y por qué el proyecto no es "solo Django".
-- **Renombré el proyecto con el script del template**: ejecuté
-  `bin/rename-project hellodjango` y verifiqué el cambio en
-  `COMPOSE_PROJECT_NAME=hellodjango` (ver `.env.example`) y en los archivos de
-  `src/config`.
-- **Configuré las variables de entorno**: copié `.env.example` a `.env` y
-  revisé cada bloque — perfiles de Compose, `SECRET_KEY` de desarrollo, puerto
-  y flags de Python — en vez de copiar sin leer.
-- **Corrí los comandos de gestión dentro del contenedor** con el script `run`:
-  `./run manage migrate` para crear las tablas y `./run manage createsuperuser`
-  para entrar al admin de Django en `http://127.0.0.1:8000/admin`.
-- **Estudié la estructura del proyecto**: `src/config` (settings y URLs),
-  `src/pages` (app de ejemplo), los templates y el entrypoint
-  `bin/docker-entrypoint-web`. Dejé mis apuntes del proceso en el notebook
-  `Copia de Fundamentos a django.ipynb`.
-- **Problemas encontrados y cómo los resolví**: al inicio intenté ejecutar
-  `python manage.py migrate` directo en mi máquina y falló, porque las
-  dependencias viven dentro de la imagen, no en mi sistema — la solución era
-  usar siempre `./run manage ...`. También me costó entender por qué la app no
-  respondía hasta que vi que el servicio `web` espera a que `postgres` pase su
-  healthcheck antes de arrancar.
+- Preparé el entorno copiando `.env.example` a `.env`.
+- Corrí los comandos de Django dentro del contenedor con el script del template
+  (`./run manage migrate`) y anoté la diferencia con un proyecto Django estándar,
+  donde se usa `python manage.py migrate`.
+- Estudié cómo está armado: la diferencia entre proyecto y aplicación, las
+  migraciones y qué archivo hace qué en cada uno.
+- Dejé mis apuntes en el notebook `Copia de Fundamentos a django.ipynb`: SSH,
+  comandos básicos de Linux, contenedores, la estructura de Django y por qué hay
+  que apagar los servicios con `docker compose down` para no gastar recursos.
 
 ## Tecnologías
 
@@ -78,18 +66,27 @@ Otros comandos útiles del template:
 docker compose down     # detener todos los servicios
 ```
 
+## Ejemplo de uso
+
+Con el stack corriendo:
+
+1. Abre <http://127.0.0.1:8000>: aparece la página de inicio del template, la misma de la captura de abajo.
+2. Crea un usuario administrador con `./run manage createsuperuser`.
+3. Entra con ese usuario a <http://127.0.0.1:8000/admin> y revisa el panel de Django.
+4. Cuando termines, apaga todo con `docker compose down` para no dejar contenedores gastando recursos.
+
 ## Capturas
 
-El template levantado y respondiendo en local:
+Pantalla de inicio del proyecto al levantarlo (la captura es la del template original de Nick Janetakis):
 
-![Screenshot de la app corriendo](.github/docs/screenshot.jpg)
+![Pantalla de inicio del template docker-django-example](.github/docs/screenshot.jpg)
 
 ## Créditos y licencia
 
 - Template original: **[docker-django-example](https://github.com/nickjj/docker-django-example)**
   de **Nick Janetakis** ([@nickjj](https://github.com/nickjj)). Todo el
   crédito de la arquitectura Docker es suyo; mi trabajo fue levantarlo,
-  personalizarlo, entenderlo y documentarlo como práctica de EBAC.
+  entenderlo y documentarlo como práctica.
 - El proyecto se distribuye bajo la **licencia MIT** (ver [`LICENSE`](LICENSE)),
   heredada del template original.
 
